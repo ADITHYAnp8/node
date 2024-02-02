@@ -183,6 +183,46 @@ app.get('/totalBusiness', (req, res) => {
   });
 });
 
+// API to calculate the sum of FTD COUNT
+app.get('/customerSum', (req, res) => {
+  const getCustomerSumQuery = 'SELECT SUM(CUST_MALE_CNT_FTD) as maleSum, SUM(CUST_FEMALE_CNT_FTD) as femaleSum, SUM(CUST_OTH_CNT_FTD) as otherSum, SUM(NON_INDIVIDUAL_CNT_FTD) as nonIndividualSum, SUM(SR_CITIZEN_CIF_FTD) as srSum, SUM(NRI_CIF_FTD) as NriSum, SUM(MBCUST_CIF_FTD) as MbSum,SUM(CUST_MALE_CNT_FTD) + SUM(CUST_FEMALE_CNT_FTD) + SUM(CUST_OTH_CNT_FTD) + SUM(NON_INDIVIDUAL_CNT_FTD) AS totalSum FROM customer_data;';
+  db.query(getCustomerSumQuery, (error, results) => {
+    if (error) {
+      console.error('Error fetching customer sum:', error);
+      return res.status(500).send({ msg: 'Internal Server Error' });
+    }
+    
+    return res.status(200).json(results[0]); // Assuming you want a single object with sums
+  });
+});
+
+// API to calculate the sum of PRE YEAR COUNT
+app.get('/customerSumPrevY', (req, res) => {
+  const getPrevCustomerSumQuery= 'SELECT SUM(CUST_MALE_CNT_PREV_FY) as maleSumPrevY, SUM(CUST_FEMALE_CNT_PREV_FY) as femaleSumPrevY, SUM(CUST_OTH_CNT_PREV_FY) as otherSumPrevY, SUM(NON_INDIVIDUAL_PREV_FY) as nonIndividualSumPrevY, SUM(SR_CITIZEN_CIF_PREV_FY) as srSumPrevY, SUM(NRI_CIF_PREV_FY) as NriSumPrevY, SUM(MBCUST_CIF_PREV_FY) as MbSumPrevY,SUM(CUST_MALE_CNT_PREV_FY) + SUM(CUST_FEMALE_CNT_PREV_FY) + SUM(CUST_OTH_CNT_PREV_FY) + SUM(NON_INDIVIDUAL_PREV_FY) AS totalSumPrevY FROM customer_data;';
+  db.query(getPrevCustomerSumQuery, (error, results) => {
+    if (error) {
+      console.error('Error fetching customer sum:', error);
+      return res.status(500).send({ msg: 'Internal Server Error' });
+    }
+    
+    return res.status(200).json(results[0]); // Assuming you want a single object with sums
+  });
+});
+
+// API to calculate the sum of PRE YEAR COUNT
+app.get('/customerSumNew', (req, res) => {
+  const getNewCustomerSumQuery= 'SELECT SUM(CUST_MALE_CNT_NEW_FY) as maleSumNew, SUM(CUST_FEMALE_CNT_NEW_FY) as femaleSumNew, SUM(CUST_OTH_CNT_NEW_FY) as otherSumNew, SUM(NON_INDIVIDUAL_NEW_FY) as nonIndividualSumNew, SUM(SR_CITIZEN_CIF_NEW_FY) as srSumNew, SUM(NRI_CIF_NEW_FY) as NriSumNew, SUM(MBCUST_CIF_NEW_FY) as MbSumNew,SUM(CUST_MALE_CNT_NEW_FY) + SUM(CUST_FEMALE_CNT_NEW_FY) + SUM(CUST_OTH_CNT_NEW_FY) + SUM(NON_INDIVIDUAL_NEW_FY) AS totalSumNew FROM customer_data;';
+  db.query(getNewCustomerSumQuery, (error, results) => {
+    if (error) {
+      console.error('Error fetching customer sum:', error);
+      return res.status(500).send({ msg: 'Internal Server Error' });
+    }
+    
+    return res.status(200).json(results[0]); // Assuming you want a single object with sums
+  });
+});
+
+
 // Event listener for MySQL connection error
 db.on('error', (err) => {
   console.error('MySQL connection error:', err);
@@ -213,7 +253,7 @@ app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });
 
-// Enable CORS with specific configuration
+// Enable CORS with specific configuration 
 const corsOptions = {
   origin: '*', // Replace with your Angular app's domain
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
