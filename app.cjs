@@ -223,6 +223,19 @@ app.get('/customerSumNew', (req, res) => {
 });
 
 
+app.get('/advanceDataSum',(req,res)=>{
+  const sql= 'SELECT PRODUCT_GRPING AS PG  FROM advance_data;';
+  db.query(sql, (error, results) => {
+    if (error) {
+      console.error('Error fetching customer sum:', error);
+      return res.status(500).send({ msg: 'Internal Server Error' });
+    }
+    
+    return res.status(200).json(results); 
+  });
+})
+
+
 // Event listener for MySQL connection error
 db.on('error', (err) => {
   console.error('MySQL connection error:', err);
