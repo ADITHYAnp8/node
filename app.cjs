@@ -222,19 +222,107 @@ app.get('/customerSumNew', (req, res) => {
   });
 }); 
 
-// // Define API endpoint to fetch product names
-// app.get('/advanceProductNames', (req, res) => {
-//   const query = 'SELECT DISTINCT PRODUCT_GRPING FROM advance_data';
-//   db.query(query, (err, results) => {
-//     if (err) {
-//       console.error('Error fetching product names:', err);
-//       res.status(500).json({ error: 'Internal Server Error' });
-//       return;
-//     }
-//     res.status(200).json(results.map(row => row.PRODUCT_GRPING));
-//   });
-// });
 
+// Define API endpoint to fetch product names with individual aliases
+app.get('/advanceProductNames', (req, res) => {
+  const query = `
+    SELECT 
+      DISTINCT 'Income Generation Loan' AS incomeGenerationLoan,
+      DISTINCT 'Utdhan Loan' AS utdhanLoan,
+      DISTINCT 'Business Loan AGORA BC' AS businessLoanAGORABC,
+      DISTINCT 'Pratheeksha kiran' AS pratheekshaKiran,
+      DISTINCT 'Monthly IGL Loan KAMAL' AS monthlyIGLLoanKAMAL,
+      DISTINCT 'ESAF Income Generation Loan' AS esafIncomeGenerationLoan,
+      DISTINCT 'ESAF Nano' AS esafNano,
+      DISTINCT 'ESAF GOLD LOAN GENERAL' AS esafGoldLoanGeneral,
+      DISTINCT 'ESAF GOLD LOAN 120 DAYS' AS esafGoldLoan120Days,
+      DISTINCT 'ESAF BUSINESS LOAN' AS esafBusinessLoan,
+      DISTINCT 'ESAF BUSINESS LOAN FORTNI' AS esafBusinessLoanFortni,
+      DISTINCT 'ESAF GENCLN ENGY PRD MTLY' AS esafGenclnEngyPrdMtly,
+      DISTINCT 'ESAF MICRO HOUSING LOAN' AS esafMicroHousingLoan,
+      DISTINCT 'ESAF MICRO HOUSING WEEKLY' AS esafMicroHousingWeekly,
+      DISTINCT 'ESAF MICRO HOUSING FORTNI' AS esafMicroHousingFortni,
+      DISTINCT 'ESAF LOAN AGAINST PROP' AS esafLoanAgainstProp,
+      DISTINCT 'ESAF LAP WEEKLY' AS esafLapWeekly,
+      DISTINCT 'ESAF LAP FORTNIGHTLY' AS esafLapFortnightly,
+      DISTINCT 'ESAF DREAM HOME LOAN' AS esafDreamHomeLoan,
+      DISTINCT 'ESAF AHL-MONTHLY' AS esafAhlMonthly,
+      DISTINCT 'ESAF Term Loan' AS esafTermLoan,
+      DISTINCT 'ESAF TWO WHEELER LOAN MTH' AS esafTwoWheelerLoanMth,
+      DISTINCT 'ESAF 3 WHEELER LOAN MTH' AS esafThreeWheelerLoanMth,
+      DISTINCT 'ESAF Car Loan New Direct' AS esafCarLoanNewDirect,
+      DISTINCT 'ESAF Car Loan Used Direct' AS esafCarLoanUsedDirect,
+      DISTINCT 'ESAF PERSONAL LOAN WEEKLY' AS esafPersonalLoanWeekly,
+      DISTINCT 'ESAF PERSONAL LOAN FORTNI' AS esafPersonalLoanFortni,
+      DISTINCT 'ESAF PERSONAL LOAN MTH' AS esafPersonalLoanMth,
+      DISTINCT 'ESAF PERSONAL LOAN' AS esafPersonalLoan,
+      DISTINCT 'ESAF LOAN AGAINST TD' AS esafLoanAgainstTd,
+      DISTINCT 'ESAF OD-AGAINST-FD' AS esafOdAgainstFd,
+      DISTINCT 'ESAF NEW CC OD' AS esafNewCcOd,
+      DISTINCT 'ESAF Salary Overdraft' AS esafSalaryOverdraft,
+      DISTINCT 'ESAF Loan against Gold for Agriculturist' AS esafLoanAgainstGoldForAgriculturist,
+      DISTINCT 'ELAGA75' AS elaga75,
+      DISTINCT 'ESAF GOLD LOAN GEN HALF YEARLY' AS esafGoldLoanGenHalfYearly,
+      DISTINCT 'ESAF BUSINESS LOAN WEEKLY' AS esafBusinessLoanWeekly,
+      DISTINCT 'ESAF LCV New Direct' AS esafLcvNewDirect,
+      DISTINCT 'ESAF LCV LOAN USED' AS esafLcvLoanUsed,
+      DISTINCT 'ESAF VEHICLE LOAN 2W' AS esafVehicleLoan2w,
+      DISTINCT 'ESAF KCC Credit' AS esafKccCredit
+    FROM advance_data`;
+  
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error fetching product names:', err);
+      res.status(500).json({ error: 'Internal Server Error' });
+      return;
+    }
+    // Map the result rows to extract the values with aliases
+    const productNames = results[0];
+    res.status(200).json(productNames);
+  });
+});
+ 
+
+// Define API endpoint to fetch sub product names from advance_data
+app.get('/advanceSubProductNames', (req, res) => {
+  const query = 'SELECT DISTINCT PROD_TYP_DESC FROM advance_data';
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error fetching product names:', err);
+      res.status(500).json({ error: 'Internal Server Error' });
+      return;
+    }
+    res.status(200).json(results.map(row => row.PROD_TYP_DESC));
+  });
+});
+
+
+// Define API endpoint to fetch main product names from deposit_data
+app.get('/depositProductNames', (req, res) => {
+  const query = 'SELECT DISTINCT PRODUCT_GRPING FROM deposit_data';
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error fetching product names:', err);
+      res.status(500).json({ error: 'Internal Server Error' });
+      return;
+    }
+    res.status(200).json(results.map(row => row.PRODUCT_GRPING));
+  });
+});
+
+
+// Define API endpoint to fetch sub product names from deposit_data
+app.get('/depositSubProductNames', (req, res) => {
+  const query = 'SELECT DISTINCT PROD_TYP_DESC FROM deposit_data';
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error fetching product names:', err);
+      res.status(500).json({ error: 'Internal Server Error' });
+      return;
+    }
+    res.status(200).json(results.map(row => row.PROD_TYP_DESC));
+  });
+});
 
 // API endpoint to get data into the advance_data's table MAIN PRODUCTS
 app.get('/mainProductAdvanceSum', (req, res) => {
@@ -258,27 +346,80 @@ app.get('/mainProductAdvanceSum', (req, res) => {
       console.error('Error fetching customer sum:', error);
       return res.status(500).send({ msg: 'Internal Server Error' });
     }
-    
-    return res.status(200).json(results[0]); // Assuming you want a single object with sums
+    // Convert each value to fixed two decimal points
+    const formattedResults = Object.entries(results[0]).reduce((acc, [key, value]) => {
+      acc[key] = typeof value === 'number' ? Number(value.toFixed(2)) : value;
+      return acc;
+    }, {});
+
+    return res.status(200).json(formattedResults);
   });
 });
 
 // API endpoint to get data into the advance_data's table SUB PRODUCTS
 app.get('/subProductAdvanceSum', (req, res) => {
-  const getSubAdvanceSumQuery = " SELECT SUM(CASE WHEN PRODUCT_GRPING = 'Agri Loan' THEN CNT_FTD ELSE 0 END) AS AgriLoanCnt,SUM(CASE WHEN PRODUCT_GRPING = 'Agri Loan' THEN OS_FTD ELSE 0 END) AS AgriLoanOs FROM advance_data;";
+  const getSubAdvanceSumQuery = ` SELECT SUM(CASE WHEN PROD_TYP_DESC = 'Income Generation Loan' THEN CNT_FTD ELSE 0 END) AS incGenLoCnt,SUM(CASE WHEN PROD_TYP_DESC = 'Income Generation Loan' THEN OS_FTD ELSE 0 END) AS incGenLoOs,
+  SUM(CASE WHEN PROD_TYP_DESC = 'Utdhan Loan' THEN CNT_FTD ELSE 0 END) AS UtdhanCnt,
+  SUM(CASE WHEN PROD_TYP_DESC = 'Utdhan Loan' THEN OS_FTD ELSE 0 END) AS UtdhanOs,SUM(CASE WHEN PROD_TYP_DESC = 'Business Loan AGORA BC' THEN CNT_FTD ELSE 0 END) AS BusiLoaAGOBCCnt,
+  SUM(CASE WHEN PROD_TYP_DESC = 'Business Loan AGORA BC' THEN OS_FTD ELSE 0 END) AS BusiLoaAGOBCOs,SUM(CASE WHEN PROD_TYP_DESC = 'Pratheeksha kiran' THEN CNT_FTD ELSE 0 END) AS PratheKirCnt,
+  SUM(CASE WHEN PROD_TYP_DESC = 'Pratheeksha kiran' THEN OS_FTD ELSE 0 END) AS PratheKirOs,
+  SUM(CASE WHEN PROD_TYP_DESC = 'Monthly IGL Loan KAMAL' THEN CNT_FTD ELSE 0 END) AS monIGLLoaKAMACnt,
+  SUM(CASE WHEN PROD_TYP_DESC = 'Monthly IGL Loan KAMAL' THEN OS_FTD ELSE 0 END) AS monIGLLoaKAMAOs,SUM(CASE WHEN PROD_TYP_DESC = 'ESAF Income Generation Loan' THEN CNT_FTD ELSE 0 END) AS ESAincoGenLoaCnt,
+  SUM(CASE WHEN PROD_TYP_DESC = 'ESAF Income Generation Loan' THEN OS_FTD ELSE 0 END) AS ESAincoGenLoaOs,
+  SUM(CASE WHEN PROD_TYP_DESC = 'ESAF Nano' THEN CNT_FTD ELSE 0 END) AS ESAFnanoCnt,SUM(CASE WHEN PROD_TYP_DESC = 'ESAF Nano' THEN OS_FTD ELSE 0 END) AS ESAFnanoOs,
+  SUM(CASE WHEN PROD_TYP_DESC = 'ESAF GOLD LOAN GENERAL' THEN CNT_FTD ELSE 0 END) AS ESAgoLoGenCnt,SUM(CASE WHEN PROD_TYP_DESC = 'ESAF GOLD LOAN GENERAL' THEN OS_FTD ELSE 0 END) AS ESAgoLoGenOs,
+  SUM(CASE WHEN PROD_TYP_DESC = 'ESAF GOLD LOAN 120 DAYS' THEN CNT_FTD ELSE 0 END) AS ESAgoLo120Cnt,SUM(CASE WHEN PROD_TYP_DESC = 'ESAF GOLD LOAN 120 DAYS' THEN OS_FTD ELSE 0 END) AS ESAgoLo120Os,
+  SUM(CASE WHEN PROD_TYP_DESC = 'ESAF BUSINESS LOAN' THEN CNT_FTD ELSE 0 END) AS ESAbusiLoCnt,SUM(CASE WHEN PROD_TYP_DESC = 'ESAF BUSINESS LOAN' THEN OS_FTD ELSE 0 END) AS ESAbusiLoOs,
+  SUM(CASE WHEN PROD_TYP_DESC = 'ESAF BUSINESS LOAN FORTNI' THEN CNT_FTD ELSE 0 END) AS ESAbusiLoaFortCnt,SUM(CASE WHEN PROD_TYP_DESC = 'ESAF BUSINESS LOAN FORTNI' THEN OS_FTD ELSE 0 END) AS ESAbusiLoaFortOs,
+  SUM(CASE WHEN PROD_TYP_DESC = 'ESAF GENCLN ENGY PRD MTLY' THEN CNT_FTD ELSE 0 END) AS GenEngyPrdMtlyCnt,SUM(CASE WHEN PROD_TYP_DESC = 'ESAF GENCLN ENGY PRD MTLY' THEN OS_FTD ELSE 0 END) AS GenEngyPrdMtlyOs,
+  SUM(CASE WHEN PROD_TYP_DESC = 'ESAF MICRO HOUSING LOAN' THEN CNT_FTD ELSE 0 END) AS McroHouLoaCnt,SUM(CASE WHEN PROD_TYP_DESC = 'ESAF MICRO HOUSING LOAN' THEN OS_FTD ELSE 0 END) AS McroHouLoaOs,
+  SUM(CASE WHEN PROD_TYP_DESC = 'ESAF MICRO HOUSING WEEKLY' THEN CNT_FTD ELSE 0 END) AS McroHouLoaWeekCnt,
+  SUM(CASE WHEN PROD_TYP_DESC = 'ESAF MICRO HOUSING WEEKLY' THEN OS_FTD ELSE 0 END) AS McroHouLoaWeekOs,SUM(CASE WHEN PROD_TYP_DESC = 'ESAF MICRO HOUSING FORTNI' THEN CNT_FTD ELSE 0 END) AS MicroHouFortCnt,
+  SUM(CASE WHEN PROD_TYP_DESC = 'ESAF MICRO HOUSING FORTNI' THEN OS_FTD ELSE 0 END) AS MicroHouFortOs,
+  SUM(CASE WHEN PROD_TYP_DESC = 'ESAF LOAN AGAINST PROP' THEN CNT_FTD ELSE 0 END) AS LoaAgaiPropCnt,SUM(CASE WHEN PROD_TYP_DESC = 'ESAF LOAN AGAINST PROP' THEN OS_FTD ELSE 0 END) AS LoaAgaiPropOs,
+  SUM(CASE WHEN PROD_TYP_DESC = 'ESAF LAP WEEKLY' THEN CNT_FTD ELSE 0 END) AS LapWeekCnt,SUM(CASE WHEN PROD_TYP_DESC = 'ESAF LAP WEEKLY' THEN OS_FTD ELSE 0 END) AS LapWeekOs,
+  SUM(CASE WHEN PROD_TYP_DESC = 'ESAF LAP FORTNIGHTLY' THEN CNT_FTD ELSE 0 END) AS LapFortNiCnt,SUM(CASE WHEN PROD_TYP_DESC = 'ESAF LAP FORTNIGHTLY' THEN OS_FTD ELSE 0 END) AS LapFortNiOs,
+  SUM(CASE WHEN PROD_TYP_DESC = 'ESAF DREAM HOME LOAN' THEN CNT_FTD ELSE 0 END) AS DreHoLoaCnt,SUM(CASE WHEN PROD_TYP_DESC = 'ESAF DREAM HOME LOAN' THEN OS_FTD ELSE 0 END) AS DreHoLoaOs,
+  SUM(CASE WHEN PROD_TYP_DESC = 'ESAF AHL-MONTHLY' THEN CNT_FTD ELSE 0 END) AS AhlMonthCnt,SUM(CASE WHEN PROD_TYP_DESC = 'ESAF AHL-MONTHLY' THEN OS_FTD ELSE 0 END) AS AhlMonthOs,SUM(CASE WHEN PROD_TYP_DESC = 'ESAF Term Loan' THEN CNT_FTD ELSE 0 END) AS TermLoaCnt,
+  SUM(CASE WHEN PROD_TYP_DESC = 'ESAF Term Loan' THEN OS_FTD ELSE 0 END) AS TermLoaOs,SUM(CASE WHEN PROD_TYP_DESC = 'ESAF TWO WHEELER LOAN MTH' THEN CNT_FTD ELSE 0 END) AS TwoWheeLoaCnt,
+  SUM(CASE WHEN PROD_TYP_DESC = 'ESAF TWO WHEELER LOAN MTH' THEN OS_FTD ELSE 0 END) AS TwoWheeLoaOs,SUM(CASE WHEN PROD_TYP_DESC = 'ESAF 3 WHEELER LOAN MTH' THEN CNT_FTD ELSE 0 END) AS Whee3LoaMthCnt,SUM(CASE WHEN PROD_TYP_DESC = 'ESAF 3 WHEELER LOAN MTH' THEN OS_FTD ELSE 0 END) AS Whee3LoaMthOs,
+  SUM(CASE WHEN PROD_TYP_DESC = 'ESAF Car Loan New Direct' THEN CNT_FTD ELSE 0 END) AS CarLoaNewDireCnt,
+  SUM(CASE WHEN PROD_TYP_DESC = 'ESAF Car Loan New Direct' THEN OS_FTD ELSE 0 END) AS CarLoaNewDireOs,SUM(CASE WHEN PROD_TYP_DESC = 'ESAF Car Loan Used Direct' THEN CNT_FTD ELSE 0 END) AS CarLoaUsedDireCnt,
+  SUM(CASE WHEN PROD_TYP_DESC = 'ESAF Car Loan Used Direct' THEN OS_FTD ELSE 0 END) AS CarLoaUsedDireOs,SUM(CASE WHEN PROD_TYP_DESC = 'ESAF PERSONAL LOAN WEEKLY' THEN CNT_FTD ELSE 0 END) AS PerLoaWeeCnt,
+  SUM(CASE WHEN PROD_TYP_DESC = 'ESAF PERSONAL LOAN WEEKLY' THEN OS_FTD ELSE 0 END) AS PerLoaWeeOs,
+  SUM(CASE WHEN PROD_TYP_DESC = 'ESAF PERSONAL LOAN FORTNI' THEN CNT_FTD ELSE 0 END) AS PerLoaFortniCnt,SUM(CASE WHEN PROD_TYP_DESC = 'ESAF PERSONAL LOAN FORTNI' THEN OS_FTD ELSE 0 END) AS PerLoaFortniOs,SUM(CASE WHEN PROD_TYP_DESC = 'ESAF PERSONAL LOAN MTH' THEN CNT_FTD ELSE 0 END) AS PerLoaMthCnt,
+  SUM(CASE WHEN PROD_TYP_DESC = 'ESAF PERSONAL LOAN MTH' THEN OS_FTD ELSE 0 END) AS PerLoaMthOs,
+  SUM(CASE WHEN PROD_TYP_DESC = 'ESAF PERSONAL LOAN' THEN CNT_FTD ELSE 0 END) AS PerLoaCnt,SUM(CASE WHEN PROD_TYP_DESC = 'ESAF PERSONAL LOAN' THEN OS_FTD ELSE 0 END) AS PerLoaOs,SUM(CASE WHEN PROD_TYP_DESC = 'ESAF LOAN AGAINST TD' THEN CNT_FTD ELSE 0 END) AS LoaAgaiTDCnt,
+  SUM(CASE WHEN PROD_TYP_DESC = 'ESAF LOAN AGAINST TD' THEN OS_FTD ELSE 0 END) AS LoaAgaiTDOs,SUM(CASE WHEN PROD_TYP_DESC = 'ESAF OD-AGAINST-FD' THEN CNT_FTD ELSE 0 END) AS ODagaiFDCnt,
+  SUM(CASE WHEN PROD_TYP_DESC = 'ESAF OD-AGAINST-FD' THEN OS_FTD ELSE 0 END) AS ODagaiFDOs,SUM(CASE WHEN PROD_TYP_DESC = 'ESAF NEW CC OD' THEN CNT_FTD ELSE 0 END) AS NewCCODCnt,SUM(CASE WHEN PROD_TYP_DESC = 'ESAF NEW CC OD' THEN OS_FTD ELSE 0 END) AS NewCCODOs,
+  SUM(CASE WHEN PROD_TYP_DESC = 'ESAF Salary Overdraft' THEN CNT_FTD ELSE 0 END) AS SalOverCnt,
+  SUM(CASE WHEN PROD_TYP_DESC = 'ESAF Salary Overdraft' THEN OS_FTD ELSE 0 END) AS SalOverOs,SUM(CASE WHEN PROD_TYP_DESC = 'ESAF Loan against Gold for Agriculturist' THEN CNT_FTD ELSE 0 END) AS LoaAgaiGolAgriCnt,
+  SUM(CASE WHEN PROD_TYP_DESC = 'ESAF Loan against Gold for Agriculturist' THEN OS_FTD ELSE 0 END) AS LoaAgaiGolAgriOs,
+  SUM(CASE WHEN PROD_TYP_DESC = 'ELAGA75' THEN CNT_FTD ELSE 0 END) AS ELAGA75Cnt,
+  SUM(CASE WHEN PROD_TYP_DESC = 'ELAGA75' THEN OS_FTD ELSE 0 END) AS ELAGA75Os,SUM(CASE WHEN PROD_TYP_DESC = 'ESAF GOLD LOAN GEN HALF YEARLY' THEN CNT_FTD ELSE 0 END) AS GolLoaGenHalfYrCnt,SUM(CASE WHEN PROD_TYP_DESC = 'ESAF GOLD LOAN GEN HALF YEARLY' THEN OS_FTD ELSE 0 END) AS GolLoaGenHalfYrOs,
+  SUM(CASE WHEN PROD_TYP_DESC = 'ESAF BUSINESS LOAN WEEKLY' THEN CNT_FTD ELSE 0 END) AS BusiLoaWeeCnt,
+  SUM(CASE WHEN PROD_TYP_DESC = 'ESAF BUSINESS LOAN WEEKLY' THEN OS_FTD ELSE 0 END) AS BusiLoaWeeOs,SUM(CASE WHEN PROD_TYP_DESC = 'ESAF LCV New Direct' THEN CNT_FTD ELSE 0 END) AS LCVNewDireCnt,
+  SUM(CASE WHEN PROD_TYP_DESC = 'ESAF LCV New Direct' THEN OS_FTD ELSE 0 END) AS LCVNewDireOs,SUM(CASE WHEN PROD_TYP_DESC = 'ESAF LCV LOAN USED' THEN CNT_FTD ELSE 0 END) AS LCVLoaUsedCnt,SUM(CASE WHEN PROD_TYP_DESC = 'ESAF LCV LOAN USED' THEN OS_FTD ELSE 0 END) AS LCVLoaUsedOs,
+  SUM(CASE WHEN PROD_TYP_DESC = 'ESAF VEHICLE LOAN 2W' THEN CNT_FTD ELSE 0 END) AS VehiLoa2WCnt,SUM(CASE WHEN PROD_TYP_DESC = 'ESAF VEHICLE LOAN 2W' THEN OS_FTD ELSE 0 END) AS VehiLoa2WOs,SUM(CASE WHEN PROD_TYP_DESC = 'ESAF KCC Credit' THEN CNT_FTD ELSE 0 END) AS KCCcrediCnt,
+  SUM(CASE WHEN PROD_TYP_DESC = 'ESAF KCC Credit' THEN OS_FTD ELSE 0 END) AS KCCcrediOs FROM advance_data;`;
 
-  db.query(getSubAdvanceSumQuery, (error, results) => {
+  db.query(getSubAdvanceSumQuery, (error, results) => { 
     if (error) {
       console.error('Error fetching advance sum:', error);
       return res.status(500).send({ msg: 'Internal Server Error' });
     }
-    
-    return res.status(200).json(results[0]);
+    // Convert each value to fixed two decimal points
+    const formattedResults = Object.entries(results[0]).reduce((acc, [key, value]) => {
+      acc[key] = typeof value === 'number' ? Number(value.toFixed(2)) : value;
+      return acc;
+    }, {});
+
+    return res.status(200).json(formattedResults);
   });
 });
 
 
-// API endpoint to geet data into the deposit_data's table
+// API endpoint to get data into the deposit_data's table
 app.get('/mainProductDepositSum', (req, res) => {
   const getDepositSumQuery = " SELECT SUM(CASE WHEN PRODUCT_GRPING = 'CA_Retail' THEN CNT_FTD ELSE 0 END) AS CARetailCnt,SUM(CASE WHEN PRODUCT_GRPING = 'CA_Retail' THEN OS_FTD ELSE 0 END) AS CARetailOs,SUM(CASE WHEN PRODUCT_GRPING = 'CA_NRI' THEN CNT_FTD ELSE 0 END) AS CANRICnt,SUM(CASE WHEN PRODUCT_GRPING = 'CA_NRI' THEN OS_FTD ELSE 0 END) AS CANRIOs,SUM(CASE WHEN PRODUCT_GRPING = 'SA_MB' THEN CNT_FTD ELSE 0 END) AS SAMBCnt,SUM(CASE WHEN PRODUCT_GRPING = 'SA_MB' THEN OS_FTD ELSE 0 END) AS SAMBOs,SUM(CASE WHEN PRODUCT_GRPING = 'SA_Retail' THEN CNT_FTD ELSE 0 END) AS SARetailCnt,SUM(CASE WHEN PRODUCT_GRPING = 'SA_Retail' THEN OS_FTD ELSE 0 END) AS SARetailOs,SUM(CASE WHEN PRODUCT_GRPING = 'SA_NRI' THEN CNT_FTD ELSE 0 END) AS SANRICnt,SUM(CASE WHEN PRODUCT_GRPING = 'SA_NRI' THEN OS_FTD ELSE 0 END) AS SANRIOs,SUM(CASE WHEN PRODUCT_GRPING = 'TDA_MB' THEN CNT_FTD ELSE 0 END) AS TDAMBCnt,SUM(CASE WHEN PRODUCT_GRPING = 'TDA_MB' THEN OS_FTD ELSE 0 END) AS TDAMBOs FROM deposit_data;";
 
@@ -287,12 +428,17 @@ app.get('/mainProductDepositSum', (req, res) => {
       console.error('Error fetching advance sum:', error);
       return res.status(500).send({ msg: 'Internal Server Error' });
     }
-    
-    return res.status(200).json(results[0]);
+    // Convert each value to fixed two decimal points
+    const formattedResults = Object.entries(results[0]).reduce((acc, [key, value]) => {
+      acc[key] = typeof value === 'number' ? Number(value.toFixed(2)) : value;
+      return acc;
+    }, {});
+
+    return res.status(200).json(formattedResults);
   });
 });
 
-// API endpoint to get data into the advance_data's table SUB PRODUCTS
+// API endpoint to get data into the deposit_data's table SUB PRODUCTS
 app.get('/subProductDepositSum', (req, res) => {
   const getSubDepositSumQuery = ` SELECT SUM(CASE WHEN PROD_TYP_DESC = 'Current account basic' THEN CNT_FTD ELSE 0 END) AS CurrentBasicCnt,SUM(CASE WHEN PROD_TYP_DESC = 'Current account basic' THEN OS_FTD ELSE 0 END) AS CurrentBasicOs,
   SUM(CASE WHEN PROD_TYP_DESC = 'Current account classic' THEN CNT_FTD ELSE 0 END) AS CurrentClassicCnt,SUM(CASE WHEN PROD_TYP_DESC = 'Current account classic' THEN OS_FTD ELSE 0 END) AS CurrentClassicOs,
@@ -308,15 +454,23 @@ app.get('/subProductDepositSum', (req, res) => {
   SUM(CASE WHEN PROD_TYP_DESC = 'SB Student' THEN OS_FTD ELSE 0 END) AS SBstuOs,SUM(CASE WHEN PROD_TYP_DESC = 'SB Salary account' THEN CNT_FTD ELSE 0 END) AS SBsalAccCnt,SUM(CASE WHEN PROD_TYP_DESC = 'SB Salary account' THEN OS_FTD ELSE 0 END) AS SBsalAccOs,SUM(CASE WHEN PROD_TYP_DESC = 'SB Staff' THEN CNT_FTD ELSE 0 END) AS SBstaffCnt,
   SUM(CASE WHEN PROD_TYP_DESC = 'SB Staff' THEN OS_FTD ELSE 0 END) AS SBstaffOs,SUM(CASE WHEN PROD_TYP_DESC = 'SB Lalith Plus' THEN CNT_FTD ELSE 0 END) AS SBlalithplusCnt,SUM(CASE WHEN PROD_TYP_DESC = 'SB Lalith Plus' THEN OS_FTD ELSE 0 END) AS SBlalithplusOs,
   SUM(CASE WHEN PROD_TYP_DESC = 'SB Zero balance' THEN CNT_FTD ELSE 0 END) AS SBzeroBalCnt,SUM(CASE WHEN PROD_TYP_DESC = 'SB Zero balance' THEN OS_FTD ELSE 0 END) AS SBzeroBalOs,SUM(CASE WHEN PROD_TYP_DESC = 'SB Krishak bandhu' THEN CNT_FTD ELSE 0 END) AS SBkriBanCnt,
-  SUM(CASE WHEN PROD_TYP_DESC = 'SB Krishak bandhu' THEN OS_FTD ELSE 0 END) AS SBkriBanOs,SUM(CASE WHEN PROD_TYP_DESC = '525-SB Salary standard ' THEN CNT_FTD ELSE 0 END) AS 525SBsalStanCnt,SUM(CASE WHEN PROD_TYP_DESC = '525-SB Salary standard' THEN OS_FTD ELSE 0 END) AS 525SBsalStanOs,SUM(CASE WHEN PROD_TYP_DESC = 'SB NRE' THEN CNT_FTD ELSE 0 END) AS SBNRECnt,SUM(CASE WHEN PROD_TYP_DESC = 'SB NRE' THEN OS_FTD ELSE 0 END) AS SBNREOs,SUM(CASE WHEN PROD_TYP_DESC = 'SB NRO' THEN CNT_FTD ELSE 0 END) AS SBNROCnt,SUM(CASE WHEN PROD_TYP_DESC = 'SB NRO' THEN OS_FTD ELSE 0 END) AS SBNROOs,SUM(CASE WHEN PROD_TYP_DESC = 'SB NRE Prem sweep(Expired)' THEN CNT_FTD ELSE 0 END) AS SBNREpremsweeexpCnt,SUM(CASE WHEN PROD_TYP_DESC = 'SB NRE Prem sweep(Expired)' THEN OS_FTD ELSE 0 END) AS SBNREpremsweeexpOs,SUM(CASE WHEN PROD_TYP_DESC = 'SB NRE Prem without sweep' THEN CNT_FTD ELSE 0 END) AS SBNREpremwithoutsweeCnt,SUM(CASE WHEN PROD_TYP_DESC = 'SB NRE Prem without sweep' THEN OS_FTD ELSE 0 END) AS SBNREpremwithoutsweeOs,SUM(CASE WHEN PROD_TYP_DESC = 'Recurring deposit weekly' THEN CNT_FTD ELSE 0 END) AS RecurDepoWeeCnt,SUM(CASE WHEN PROD_TYP_DESC = 'Recurring deposit weekly' THEN OS_FTD ELSE 0 END) AS RecurDepoWeeOs FROM deposit_data;`;
+  SUM(CASE WHEN PROD_TYP_DESC = 'SB Krishak bandhu' THEN OS_FTD ELSE 0 END) AS SBkriBanOs,SUM(CASE WHEN PROD_TYP_DESC = '525-SB Salary standard ' THEN CNT_FTD ELSE 0 END) AS SBsalStanCnt,SUM(CASE WHEN PROD_TYP_DESC = '525-SB Salary standard' THEN OS_FTD ELSE 0 END) AS SBsalStanOs,
+  SUM(CASE WHEN PROD_TYP_DESC = 'SB NRE' THEN CNT_FTD ELSE 0 END) AS SBNRECnt,SUM(CASE WHEN PROD_TYP_DESC = 'SB NRE' THEN OS_FTD ELSE 0 END) AS SBNREOs,SUM(CASE WHEN PROD_TYP_DESC = 'SB NRO' THEN CNT_FTD ELSE 0 END) AS SBNROCnt,SUM(CASE WHEN PROD_TYP_DESC = 'SB NRO' THEN OS_FTD ELSE 0 END) AS SBNROOs,
+  SUM(CASE WHEN PROD_TYP_DESC = 'SB NRE Prem sweep(Expired)' THEN CNT_FTD ELSE 0 END) AS SBNREpremsweeexpCnt,SUM(CASE WHEN PROD_TYP_DESC = 'SB NRE Prem sweep(Expired)' THEN OS_FTD ELSE 0 END) AS SBNREpremsweeexpOs,SUM(CASE WHEN PROD_TYP_DESC = 'SB NRE Prem without sweep' THEN CNT_FTD ELSE 0 END) AS SBNREpremwithoutsweeCnt,
+  SUM(CASE WHEN PROD_TYP_DESC = 'SB NRE Prem without sweep' THEN OS_FTD ELSE 0 END) AS SBNREpremwithoutsweeOs,SUM(CASE WHEN PROD_TYP_DESC = 'Recurring deposit weekly' THEN CNT_FTD ELSE 0 END) AS RecurDepoWeeCnt,SUM(CASE WHEN PROD_TYP_DESC = 'Recurring deposit weekly' THEN OS_FTD ELSE 0 END) AS RecurDepoWeeOs FROM deposit_data;`;
 
   db.query(getSubDepositSumQuery, (error, results) => {
     if (error) {
       console.error('Error fetching advance sum:', error);
       return res.status(500).send({ msg: 'Internal Server Error' });
     }
-    
-    return res.status(200).json(results[0]);
+    // Convert each value to fixed two decimal points
+    const formattedResults = Object.entries(results[0]).reduce((acc, [key, value]) => {
+      acc[key] = typeof value === 'number' ? Number(value.toFixed(2)) : value;
+      return acc;
+    }, {});
+
+    return res.status(200).json(formattedResults);
   });
 });
 
