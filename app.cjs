@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
 const cors = require('cors');
 const app = express();
+// const router = express.Router();
 const port = 3000;
 
 // Setup MySQL connection
@@ -183,6 +184,7 @@ app.get('/totalBusiness', (req, res) => {
   });
 });
 
+  
 // API to calculate the sum of FTD COUNT
 app.get('/customerSum', (req, res) => {
   const getCustomerSumQuery = 'SELECT SUM(CUST_MALE_CNT_FTD) as maleSum, SUM(CUST_FEMALE_CNT_FTD) as femaleSum, SUM(CUST_OTH_CNT_FTD) as otherSum, SUM(NON_INDIVIDUAL_CNT_FTD) as nonIndividualSum, SUM(SR_CITIZEN_CIF_FTD) as srSum, SUM(NRI_CIF_FTD) as NriSum, SUM(MBCUST_CIF_FTD) as MbSum,SUM(CUST_MALE_CNT_FTD) + SUM(CUST_FEMALE_CNT_FTD) + SUM(CUST_OTH_CNT_FTD) + SUM(NON_INDIVIDUAL_CNT_FTD) AS totalSum FROM customer_data;';
@@ -222,52 +224,83 @@ app.get('/customerSumNew', (req, res) => {
   });
 }); 
 
+ 
 
-// Define API endpoint to fetch product names with individual aliases
+// Define API endpoint to fetch main product names from advance_data
 app.get('/advanceProductNames', (req, res) => {
   const query = `
-    SELECT 
-      DISTINCT 'Income Generation Loan' AS incomeGenerationLoan,
-      DISTINCT 'Utdhan Loan' AS utdhanLoan,
-      DISTINCT 'Business Loan AGORA BC' AS businessLoanAGORABC,
-      DISTINCT 'Pratheeksha kiran' AS pratheekshaKiran,
-      DISTINCT 'Monthly IGL Loan KAMAL' AS monthlyIGLLoanKAMAL,
-      DISTINCT 'ESAF Income Generation Loan' AS esafIncomeGenerationLoan,
-      DISTINCT 'ESAF Nano' AS esafNano,
-      DISTINCT 'ESAF GOLD LOAN GENERAL' AS esafGoldLoanGeneral,
-      DISTINCT 'ESAF GOLD LOAN 120 DAYS' AS esafGoldLoan120Days,
-      DISTINCT 'ESAF BUSINESS LOAN' AS esafBusinessLoan,
-      DISTINCT 'ESAF BUSINESS LOAN FORTNI' AS esafBusinessLoanFortni,
-      DISTINCT 'ESAF GENCLN ENGY PRD MTLY' AS esafGenclnEngyPrdMtly,
-      DISTINCT 'ESAF MICRO HOUSING LOAN' AS esafMicroHousingLoan,
-      DISTINCT 'ESAF MICRO HOUSING WEEKLY' AS esafMicroHousingWeekly,
-      DISTINCT 'ESAF MICRO HOUSING FORTNI' AS esafMicroHousingFortni,
-      DISTINCT 'ESAF LOAN AGAINST PROP' AS esafLoanAgainstProp,
-      DISTINCT 'ESAF LAP WEEKLY' AS esafLapWeekly,
-      DISTINCT 'ESAF LAP FORTNIGHTLY' AS esafLapFortnightly,
-      DISTINCT 'ESAF DREAM HOME LOAN' AS esafDreamHomeLoan,
-      DISTINCT 'ESAF AHL-MONTHLY' AS esafAhlMonthly,
-      DISTINCT 'ESAF Term Loan' AS esafTermLoan,
-      DISTINCT 'ESAF TWO WHEELER LOAN MTH' AS esafTwoWheelerLoanMth,
-      DISTINCT 'ESAF 3 WHEELER LOAN MTH' AS esafThreeWheelerLoanMth,
-      DISTINCT 'ESAF Car Loan New Direct' AS esafCarLoanNewDirect,
-      DISTINCT 'ESAF Car Loan Used Direct' AS esafCarLoanUsedDirect,
-      DISTINCT 'ESAF PERSONAL LOAN WEEKLY' AS esafPersonalLoanWeekly,
-      DISTINCT 'ESAF PERSONAL LOAN FORTNI' AS esafPersonalLoanFortni,
-      DISTINCT 'ESAF PERSONAL LOAN MTH' AS esafPersonalLoanMth,
-      DISTINCT 'ESAF PERSONAL LOAN' AS esafPersonalLoan,
-      DISTINCT 'ESAF LOAN AGAINST TD' AS esafLoanAgainstTd,
-      DISTINCT 'ESAF OD-AGAINST-FD' AS esafOdAgainstFd,
-      DISTINCT 'ESAF NEW CC OD' AS esafNewCcOd,
-      DISTINCT 'ESAF Salary Overdraft' AS esafSalaryOverdraft,
-      DISTINCT 'ESAF Loan against Gold for Agriculturist' AS esafLoanAgainstGoldForAgriculturist,
-      DISTINCT 'ELAGA75' AS elaga75,
-      DISTINCT 'ESAF GOLD LOAN GEN HALF YEARLY' AS esafGoldLoanGenHalfYearly,
-      DISTINCT 'ESAF BUSINESS LOAN WEEKLY' AS esafBusinessLoanWeekly,
-      DISTINCT 'ESAF LCV New Direct' AS esafLcvNewDirect,
-      DISTINCT 'ESAF LCV LOAN USED' AS esafLcvLoanUsed,
-      DISTINCT 'ESAF VEHICLE LOAN 2W' AS esafVehicleLoan2w,
-      DISTINCT 'ESAF KCC Credit' AS esafKccCredit
+    SELECT DISTINCT
+      'Micro Finance Loan' AS microFinanceLoan,
+      'Gold Loan' AS goldLoan,
+      'Business Loan' AS businessLoan,
+      'Clean Energy Loan' AS cleanEnergyLoan,
+      'Mortgage Loan' AS mortgageLoan,
+      'Loan Against Property' AS loanAgainstProperty,
+      'Term Loan' AS termLoan,
+      'Auto Loan' AS autoLoan,
+      'Personal Loan' AS personalLoan,
+      'Loan Against Deposit' AS loanAgainstDeposit,
+      'CC OD Loan' AS ccOdLoan,
+      'Agri Loan' AS agriLoan,
+      'KCC Loan' AS kccLoan
+    FROM advance_data`;
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error fetching product names:', err);
+      res.status(500).json({ error: 'Internal Server Error' });
+      return;
+    }
+    res.status(200).json(results[0]);
+  });
+});
+
+
+//To get Advance sub products
+app.get('/advanceSubProductNames', (req, res) => {
+  const query = `
+    SELECT DISTINCT
+      'Income Generation Loan' AS incomeGenerationLoan,
+      'Utdhan Loan' AS utdhanLoan,
+      'Business Loan AGORA BC' AS businessLoanAGORABC,
+      'Pratheeksha kiran' AS pratheekshaKiran,
+      'Monthly IGL Loan KAMAL' AS monthlyIGLLoanKAMAL,
+      'ESAF Income Generation Loan' AS esafIncomeGenerationLoan,
+      'ESAF Nano' AS esafNano,
+      'ESAF GOLD LOAN GENERAL' AS esafGoldLoanGeneral,
+      'ESAF GOLD LOAN 120 DAYS' AS esafGoldLoan120Days,
+      'ESAF BUSINESS LOAN' AS esafBusinessLoan,
+      'ESAF BUSINESS LOAN FORTNI' AS esafBusinessLoanFortni,
+      'ESAF GENCLN ENGY PRD MTLY' AS esafGenclnEngyPrdMtly,
+      'ESAF MICRO HOUSING LOAN' AS esafMicroHousingLoan,
+      'ESAF MICRO HOUSING WEEKLY' AS esafMicroHousingWeekly,
+      'ESAF MICRO HOUSING FORTNI' AS esafMicroHousingFortni,
+      'ESAF LOAN AGAINST PROP' AS esafLoanAgainstProp,
+      'ESAF LAP WEEKLY' AS esafLapWeekly,
+      'ESAF LAP FORTNIGHTLY' AS esafLapFortnightly,
+      'ESAF DREAM HOME LOAN' AS esafDreamHomeLoan,
+      'ESAF AHL-MONTHLY' AS esafAhlMonthly,
+      'ESAF Term Loan' AS esafTermLoan,
+      'ESAF TWO WHEELER LOAN MTH' AS esafTwoWheelerLoanMth,
+      'ESAF 3 WHEELER LOAN MTH' AS esafThreeWheelerLoanMth,
+      'ESAF Car Loan New Direct' AS esafCarLoanNewDirect,
+      'ESAF Car Loan Used Direct' AS esafCarLoanUsedDirect,
+      'ESAF PERSONAL LOAN WEEKLY' AS esafPersonalLoanWeekly,
+      'ESAF PERSONAL LOAN FORTNI' AS esafPersonalLoanFortni,
+      'ESAF PERSONAL LOAN MTH' AS esafPersonalLoanMth,
+      'ESAF PERSONAL LOAN' AS esafPersonalLoan,
+      'ESAF LOAN AGAINST TD' AS esafLoanAgainstTd,
+      'ESAF OD-AGAINST-FD' AS esafOdAgainstFd,
+      'ESAF NEW CC OD' AS esafNewCcOd,
+      'ESAF Salary Overdraft' AS esafSalaryOverdraft,
+      'ESAF Loan against Gold for Agriculturist' AS esafLoanAgainstGoldForAgriculturist,
+      'ELAGA75' AS elaga75,
+      'ESAF GOLD LOAN GEN HALF YEARLY' AS esafGoldLoanGenHalfYearly,
+      'ESAF BUSINESS LOAN WEEKLY' AS esafBusinessLoanWeekly,
+      'ESAF LCV New Direct' AS esafLcvNewDirect,
+      'ESAF LCV LOAN USED' AS esafLcvLoanUsed,
+      'ESAF VEHICLE LOAN 2W' AS esafVehicleLoan2w,
+      'ESAF KCC Credit' AS esafKccCredit
     FROM advance_data`;
   
   db.query(query, (err, results) => {
@@ -276,53 +309,194 @@ app.get('/advanceProductNames', (req, res) => {
       res.status(500).json({ error: 'Internal Server Error' });
       return;
     }
-    // Map the result rows to extract the values with aliases
-    const productNames = results[0];
-    res.status(200).json(productNames);
+    // Assuming results is an array of objects, simply return it
+    res.status(200).json(results[0]);
   });
-});
- 
+}); 
 
-// Define API endpoint to fetch sub product names from advance_data
-app.get('/advanceSubProductNames', (req, res) => {
-  const query = 'SELECT DISTINCT PROD_TYP_DESC FROM advance_data';
-  db.query(query, (err, results) => {
-    if (err) {
-      console.error('Error fetching product names:', err);
-      res.status(500).json({ error: 'Internal Server Error' });
-      return;
-    }
-    res.status(200).json(results.map(row => row.PROD_TYP_DESC));
-  });
-});
 
 
 // Define API endpoint to fetch main product names from deposit_data
 app.get('/depositProductNames', (req, res) => {
-  const query = 'SELECT DISTINCT PRODUCT_GRPING FROM deposit_data';
+  const query = `
+    SELECT DISTINCT
+      'CA_Retail' AS caRetail,
+      'CA_NRI' AS caNRI,
+      'SA_MB' AS saMB,
+      'SA_Retail' AS saRetail,
+      'SA_NRI' AS saNRI,
+      'TDA_MB' AS tdaMB
+    FROM advance_data`;
+
   db.query(query, (err, results) => {
     if (err) {
-      console.error('Error fetching product names:', err);
+      console.error('Error fetching sub-product names:', err);
       res.status(500).json({ error: 'Internal Server Error' });
       return;
     }
-    res.status(200).json(results.map(row => row.PRODUCT_GRPING));
+    res.status(200).json(results[0]);
   });
 });
+
 
 
 // Define API endpoint to fetch sub product names from deposit_data
 app.get('/depositSubProductNames', (req, res) => {
-  const query = 'SELECT DISTINCT PROD_TYP_DESC FROM deposit_data';
+  const query = `
+    SELECT DISTINCT
+      'Current account basic' AS currentAccountBasic,
+      'Current account classic' AS currentAccountClassic,
+      'CA Premium with sweep' AS caPremiumWithSweep,
+      'CA Diamond with sweep' AS caDiamondWithSweep,
+      'Basic agent' AS basicAgent,
+      'Escrow account' AS escrowAccount,
+      'CA Premium without sweep' AS caPremiumWithoutSweep,
+      'CA Diamond without sweep' AS caDiamondWithoutSweep,
+      'CAA NRE' AS caaNRE,
+      'CA NRO' AS caNRO,
+      'SB Lalith' AS sbLalith,
+      'SB Mahila' AS sbMahila,
+      'SB Regular' AS sbRegular,
+      'SB Senior citizen' AS sbSeniorCitizen,
+      'SB Premium with sweep(Expired)' AS sbPremiumWithSweepExpired,
+      'SB Premium without sweep' AS sbPremiumWithoutSweep,
+      'SB TASC' AS sbTASC,
+      'SB NRE' AS sbNRE,
+      'SB NRO' AS sbNRO,
+      'SB NRE Prem sweep(Expired)' AS sbNREPremSweepExpired,
+      'SB NRE Prem without sweep' AS sbNREPremWithoutSweep,
+      'SB Student' AS sbStudent,
+      'SB Salary account' AS sbSalaryAccount,
+      'SB Staff' AS sbStaff,
+      'SB Lalith Plus' AS sbLalithPlus,
+      'SB Zero balance' AS sbZeroBalance,
+      'SB Krishak bandhu' AS sbKrishakBandhu,
+      'Recurring deposit weekly' AS recurringDepositWeekly,
+      '525 - SB Salary standard' AS sbSalaryStandard
+    FROM deposit_data`;
+  
   db.query(query, (err, results) => {
     if (err) {
       console.error('Error fetching product names:', err);
       res.status(500).json({ error: 'Internal Server Error' });
       return;
     }
-    res.status(200).json(results.map(row => row.PROD_TYP_DESC));
+    res.status(200).json(results[0]);
   });
 });
+
+
+// // Define API endpoint to fetch filtered data based on user input
+// app.post('/filteredAdvanceData', (req, res) => {
+//   // Retrieve user input from query parameter
+//   const userInput = req.query.userInput;
+
+//   // Determine if the user input is a number
+//   const isNumber = /^\d+$/.test(userInput);   
+
+//   // Construct SQL query to filter data based on user input
+//   let query;
+//   let queryParams;
+//   if (isNumber) {
+//     query = `
+//       SELECT SUM(CASE WHEN PRODUCT_GRPING = 'Micro Fianance Loan' THEN CNT_FTD ELSE 0 END) AS MicroFinanceLoanCnt,
+//       SUM(CASE WHEN PRODUCT_GRPING = 'Micro Fianance Loan' THEN OS_FTD ELSE 0 END) AS MicroFinanceLoanOs,SUM(CASE WHEN PRODUCT_GRPING = 'Gold Loan' THEN CNT_FTD ELSE 0 END) AS GoldLoanCnt,
+//       SUM(CASE WHEN PRODUCT_GRPING = 'Gold Loan' THEN OS_FTD ELSE 0 END) AS GoldLoanOs,SUM(CASE WHEN PRODUCT_GRPING = 'Business Loan' THEN CNT_FTD ELSE 0 END) AS BusinessLoanCnt,
+//       SUM(CASE WHEN PRODUCT_GRPING = 'Business Loan' THEN OS_FTD ELSE 0 END) AS BusinessLoanOs,SUM(CASE WHEN PRODUCT_GRPING = 'Clean Energy Loan' THEN CNT_FTD ELSE 0 END) AS CleanEnergyLoanCnt,
+//       SUM(CASE WHEN PRODUCT_GRPING = 'Clean Energy Loan' THEN OS_FTD ELSE 0 END) AS CleanEnergyLoanOs,SUM(CASE WHEN PRODUCT_GRPING = 'Mortgage Loan' THEN CNT_FTD ELSE 0 END) AS MortgageLoanCnt,
+//       SUM(CASE WHEN PRODUCT_GRPING = 'Mortgage Loan' THEN OS_FTD ELSE 0 END) AS MortgageLoanOs,SUM(CASE WHEN PRODUCT_GRPING = 'Term Loan' THEN CNT_FTD ELSE 0 END) AS TermLoanCnt,
+//       SUM(CASE WHEN PRODUCT_GRPING = 'Term Loan' THEN OS_FTD ELSE 0 END) AS TermLoanOs,SUM(CASE WHEN PRODUCT_GRPING = 'Loan Against Deposit' THEN CNT_FTD ELSE 0 END) AS LoanAgainstDepoCnt,
+//       SUM(CASE WHEN PRODUCT_GRPING = 'Loan Against Deposit' THEN OS_FTD ELSE 0 END) AS LoanAgainstDepoOs,SUM(CASE WHEN PRODUCT_GRPING = 'Loan Against Property' THEN CNT_FTD ELSE 0 END) AS LoanAgainstPropertyCnt,
+//       SUM(CASE WHEN PRODUCT_GRPING = 'Loan Against Property' THEN OS_FTD ELSE 0 END) AS LoanAgainstPropertyOs,SUM(CASE WHEN PRODUCT_GRPING = 'Auto loan' THEN CNT_FTD ELSE 0 END) AS AutoLoanCnt,
+//       SUM(CASE WHEN PRODUCT_GRPING = 'Auto loan' THEN OS_FTD ELSE 0 END) AS AutoLoanOs,SUM(CASE WHEN PRODUCT_GRPING = 'Personal Loan' THEN CNT_FTD ELSE 0 END) AS PersonalLoanCnt,
+//       SUM(CASE WHEN PRODUCT_GRPING = 'Personal Loan' THEN OS_FTD ELSE 0 END) AS PersonalLoanOs,SUM(CASE WHEN PRODUCT_GRPING = 'CC OD Loan' THEN CNT_FTD ELSE 0 END) AS CcOdLoanCnt,
+//       SUM(CASE WHEN PRODUCT_GRPING = 'CC OD Loan' THEN OS_FTD ELSE 0 END) AS CcOdLoanOs,SUM(CASE WHEN PRODUCT_GRPING = 'Agri Loan' THEN CNT_FTD ELSE 0 END) AS AgriLoanCnt,
+//       SUM(CASE WHEN PRODUCT_GRPING = 'Agri Loan' THEN OS_FTD ELSE 0 END) AS AgriLoanOs,SUM(CASE WHEN PRODUCT_GRPING = 'KCC Loan' THEN CNT_FTD ELSE 0 END) AS KccLoanCnt,
+//       SUM(CASE WHEN PRODUCT_GRPING = 'KCC Loan' THEN OS_FTD ELSE 0 END) AS KccLoanOs
+//       FROM advance_data
+//       WHERE BRANCH_ID = ?`;
+//     queryParams = [parseInt(userInput)];
+//   } else {
+//     query = `
+//       SELECT SUM(CASE WHEN PRODUCT_GRPING = 'Micro Fianance Loan' THEN CNT_FTD ELSE 0 END) AS MicroFinanceLoanCnt,
+//       SUM(CASE WHEN PRODUCT_GRPING = 'Micro Fianance Loan' THEN OS_FTD ELSE 0 END) AS MicroFinanceLoanOs,SUM(CASE WHEN PRODUCT_GRPING = 'Gold Loan' THEN CNT_FTD ELSE 0 END) AS GoldLoanCnt,
+//       SUM(CASE WHEN PRODUCT_GRPING = 'Gold Loan' THEN OS_FTD ELSE 0 END) AS GoldLoanOs,SUM(CASE WHEN PRODUCT_GRPING = 'Business Loan' THEN CNT_FTD ELSE 0 END) AS BusinessLoanCnt,
+//       SUM(CASE WHEN PRODUCT_GRPING = 'Business Loan' THEN OS_FTD ELSE 0 END) AS BusinessLoanOs,SUM(CASE WHEN PRODUCT_GRPING = 'Clean Energy Loan' THEN CNT_FTD ELSE 0 END) AS CleanEnergyLoanCnt,
+//       SUM(CASE WHEN PRODUCT_GRPING = 'Clean Energy Loan' THEN OS_FTD ELSE 0 END) AS CleanEnergyLoanOs,SUM(CASE WHEN PRODUCT_GRPING = 'Mortgage Loan' THEN CNT_FTD ELSE 0 END) AS MortgageLoanCnt,
+//       SUM(CASE WHEN PRODUCT_GRPING = 'Mortgage Loan' THEN OS_FTD ELSE 0 END) AS MortgageLoanOs,SUM(CASE WHEN PRODUCT_GRPING = 'Term Loan' THEN CNT_FTD ELSE 0 END) AS TermLoanCnt,
+//       SUM(CASE WHEN PRODUCT_GRPING = 'Term Loan' THEN OS_FTD ELSE 0 END) AS TermLoanOs,SUM(CASE WHEN PRODUCT_GRPING = 'Loan Against Deposit' THEN CNT_FTD ELSE 0 END) AS LoanAgainstDepoCnt,
+//       SUM(CASE WHEN PRODUCT_GRPING = 'Loan Against Deposit' THEN OS_FTD ELSE 0 END) AS LoanAgainstDepoOs,SUM(CASE WHEN PRODUCT_GRPING = 'Loan Against Property' THEN CNT_FTD ELSE 0 END) AS LoanAgainstPropertyCnt,
+//       SUM(CASE WHEN PRODUCT_GRPING = 'Loan Against Property' THEN OS_FTD ELSE 0 END) AS LoanAgainstPropertyOs,SUM(CASE WHEN PRODUCT_GRPING = 'Auto loan' THEN CNT_FTD ELSE 0 END) AS AutoLoanCnt,
+//       SUM(CASE WHEN PRODUCT_GRPING = 'Auto loan' THEN OS_FTD ELSE 0 END) AS AutoLoanOs,SUM(CASE WHEN PRODUCT_GRPING = 'Personal Loan' THEN CNT_FTD ELSE 0 END) AS PersonalLoanCnt,
+//       SUM(CASE WHEN PRODUCT_GRPING = 'Personal Loan' THEN OS_FTD ELSE 0 END) AS PersonalLoanOs,SUM(CASE WHEN PRODUCT_GRPING = 'CC OD Loan' THEN CNT_FTD ELSE 0 END) AS CcOdLoanCnt,
+//       SUM(CASE WHEN PRODUCT_GRPING = 'CC OD Loan' THEN OS_FTD ELSE 0 END) AS CcOdLoanOs,SUM(CASE WHEN PRODUCT_GRPING = 'Agri Loan' THEN CNT_FTD ELSE 0 END) AS AgriLoanCnt,
+//       SUM(CASE WHEN PRODUCT_GRPING = 'Agri Loan' THEN OS_FTD ELSE 0 END) AS AgriLoanOs,SUM(CASE WHEN PRODUCT_GRPING = 'KCC Loan' THEN CNT_FTD ELSE 0 END) AS KccLoanCnt,
+//       SUM(CASE WHEN PRODUCT_GRPING = 'KCC Loan' THEN OS_FTD ELSE 0 END) AS KccLoanOs
+//       FROM advance_data
+//       WHERE BRANCH_NAME LIKE ?`;
+//     queryParams = [`%${userInput}%`];
+//   }
+
+//   // Execute SQL query with user input as parameter
+//   db.query(query, queryParams, (err, results) => {
+//     if (err) {
+//       console.error('Error fetching filtered advance data:', err);
+//       res.status(500).json({ error: 'Internal Server Error' });
+//       return;
+//     }
+//     res.status(200).json(results[0]);
+//   });
+// });
+
+// Define POST API endpoint to fetch filtered data based on branch name
+    // Retrieve input data from request body
+    app.post('/filteredAdvanceDataByBranchName', (req, res) => {
+      const { branchName } = req.body;
+    
+      if (!branchName) {
+        return res.status(400).json({ error: 'Branch name is required' });
+      }
+
+      // const { branchID } = req.body;
+    
+      // if (!branchID) {
+      //   return res.status(400).json({ error: 'Branch ID is required' });
+      // }      
+      
+      const query = `
+        SELECT * 
+        FROM customer.advance_data 
+        WHERE BRANCH_NAME = ? `;
+      const queryParams = [branchName];
+
+        // const query1 = `
+        // SELECT * 
+        // FROM customer.advance_data 
+        // WHERE BRANCH_ID = ? `;
+        // const queryParams1 = [branchID];
+    
+      db.query(query,queryParams, (err, results) => {
+        if (err) {
+          console.error('Error fetching filtered data:', err);
+          res.status(500).json({ error: 'Internal Server Error' });
+          return;
+        }
+        res.status(200).json(results);
+      });
+    });
+    app.get('/branches', (req, res) => {
+      const query = `SELECT DISTINCT BRANCH_NAME, BRANCH_ID FROM customer.advance_data`;
+    
+      db.query(query, (err, results) => {
+        if (err) {
+          console.error('Error fetching branches:', err);
+          res.status(500).json({ error: 'Internal Server Error' });
+          return;
+        }
+        res.status(200).json(results);
+      });
+    });
+
 
 // API endpoint to get data into the advance_data's table MAIN PRODUCTS
 app.get('/mainProductAdvanceSum', (req, res) => {
