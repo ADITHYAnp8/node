@@ -5,7 +5,7 @@ const bcrypt = require('bcrypt');
 const cors = require('cors');
 const app = express();
 // const router = express.Router();
-const port = 3000;
+const port = 3001;
 
 // Setup MySQL connection
 const db = mysql.createConnection({
@@ -386,116 +386,179 @@ app.get('/depositSubProductNames', (req, res) => {
 });
 
 
-// // Define API endpoint to fetch filtered data based on user input
-// app.post('/filteredAdvanceData', (req, res) => {
-//   // Retrieve user input from query parameter
-//   const userInput = req.query.userInput;
-
-//   // Determine if the user input is a number
-//   const isNumber = /^\d+$/.test(userInput);   
-
-//   // Construct SQL query to filter data based on user input
-//   let query;
-//   let queryParams;
-//   if (isNumber) {
-//     query = `
-//       SELECT SUM(CASE WHEN PRODUCT_GRPING = 'Micro Fianance Loan' THEN CNT_FTD ELSE 0 END) AS MicroFinanceLoanCnt,
-//       SUM(CASE WHEN PRODUCT_GRPING = 'Micro Fianance Loan' THEN OS_FTD ELSE 0 END) AS MicroFinanceLoanOs,SUM(CASE WHEN PRODUCT_GRPING = 'Gold Loan' THEN CNT_FTD ELSE 0 END) AS GoldLoanCnt,
-//       SUM(CASE WHEN PRODUCT_GRPING = 'Gold Loan' THEN OS_FTD ELSE 0 END) AS GoldLoanOs,SUM(CASE WHEN PRODUCT_GRPING = 'Business Loan' THEN CNT_FTD ELSE 0 END) AS BusinessLoanCnt,
-//       SUM(CASE WHEN PRODUCT_GRPING = 'Business Loan' THEN OS_FTD ELSE 0 END) AS BusinessLoanOs,SUM(CASE WHEN PRODUCT_GRPING = 'Clean Energy Loan' THEN CNT_FTD ELSE 0 END) AS CleanEnergyLoanCnt,
-//       SUM(CASE WHEN PRODUCT_GRPING = 'Clean Energy Loan' THEN OS_FTD ELSE 0 END) AS CleanEnergyLoanOs,SUM(CASE WHEN PRODUCT_GRPING = 'Mortgage Loan' THEN CNT_FTD ELSE 0 END) AS MortgageLoanCnt,
-//       SUM(CASE WHEN PRODUCT_GRPING = 'Mortgage Loan' THEN OS_FTD ELSE 0 END) AS MortgageLoanOs,SUM(CASE WHEN PRODUCT_GRPING = 'Term Loan' THEN CNT_FTD ELSE 0 END) AS TermLoanCnt,
-//       SUM(CASE WHEN PRODUCT_GRPING = 'Term Loan' THEN OS_FTD ELSE 0 END) AS TermLoanOs,SUM(CASE WHEN PRODUCT_GRPING = 'Loan Against Deposit' THEN CNT_FTD ELSE 0 END) AS LoanAgainstDepoCnt,
-//       SUM(CASE WHEN PRODUCT_GRPING = 'Loan Against Deposit' THEN OS_FTD ELSE 0 END) AS LoanAgainstDepoOs,SUM(CASE WHEN PRODUCT_GRPING = 'Loan Against Property' THEN CNT_FTD ELSE 0 END) AS LoanAgainstPropertyCnt,
-//       SUM(CASE WHEN PRODUCT_GRPING = 'Loan Against Property' THEN OS_FTD ELSE 0 END) AS LoanAgainstPropertyOs,SUM(CASE WHEN PRODUCT_GRPING = 'Auto loan' THEN CNT_FTD ELSE 0 END) AS AutoLoanCnt,
-//       SUM(CASE WHEN PRODUCT_GRPING = 'Auto loan' THEN OS_FTD ELSE 0 END) AS AutoLoanOs,SUM(CASE WHEN PRODUCT_GRPING = 'Personal Loan' THEN CNT_FTD ELSE 0 END) AS PersonalLoanCnt,
-//       SUM(CASE WHEN PRODUCT_GRPING = 'Personal Loan' THEN OS_FTD ELSE 0 END) AS PersonalLoanOs,SUM(CASE WHEN PRODUCT_GRPING = 'CC OD Loan' THEN CNT_FTD ELSE 0 END) AS CcOdLoanCnt,
-//       SUM(CASE WHEN PRODUCT_GRPING = 'CC OD Loan' THEN OS_FTD ELSE 0 END) AS CcOdLoanOs,SUM(CASE WHEN PRODUCT_GRPING = 'Agri Loan' THEN CNT_FTD ELSE 0 END) AS AgriLoanCnt,
-//       SUM(CASE WHEN PRODUCT_GRPING = 'Agri Loan' THEN OS_FTD ELSE 0 END) AS AgriLoanOs,SUM(CASE WHEN PRODUCT_GRPING = 'KCC Loan' THEN CNT_FTD ELSE 0 END) AS KccLoanCnt,
-//       SUM(CASE WHEN PRODUCT_GRPING = 'KCC Loan' THEN OS_FTD ELSE 0 END) AS KccLoanOs
-//       FROM advance_data
-//       WHERE BRANCH_ID = ?`;
-//     queryParams = [parseInt(userInput)];
-//   } else {
-//     query = `
-//       SELECT SUM(CASE WHEN PRODUCT_GRPING = 'Micro Fianance Loan' THEN CNT_FTD ELSE 0 END) AS MicroFinanceLoanCnt,
-//       SUM(CASE WHEN PRODUCT_GRPING = 'Micro Fianance Loan' THEN OS_FTD ELSE 0 END) AS MicroFinanceLoanOs,SUM(CASE WHEN PRODUCT_GRPING = 'Gold Loan' THEN CNT_FTD ELSE 0 END) AS GoldLoanCnt,
-//       SUM(CASE WHEN PRODUCT_GRPING = 'Gold Loan' THEN OS_FTD ELSE 0 END) AS GoldLoanOs,SUM(CASE WHEN PRODUCT_GRPING = 'Business Loan' THEN CNT_FTD ELSE 0 END) AS BusinessLoanCnt,
-//       SUM(CASE WHEN PRODUCT_GRPING = 'Business Loan' THEN OS_FTD ELSE 0 END) AS BusinessLoanOs,SUM(CASE WHEN PRODUCT_GRPING = 'Clean Energy Loan' THEN CNT_FTD ELSE 0 END) AS CleanEnergyLoanCnt,
-//       SUM(CASE WHEN PRODUCT_GRPING = 'Clean Energy Loan' THEN OS_FTD ELSE 0 END) AS CleanEnergyLoanOs,SUM(CASE WHEN PRODUCT_GRPING = 'Mortgage Loan' THEN CNT_FTD ELSE 0 END) AS MortgageLoanCnt,
-//       SUM(CASE WHEN PRODUCT_GRPING = 'Mortgage Loan' THEN OS_FTD ELSE 0 END) AS MortgageLoanOs,SUM(CASE WHEN PRODUCT_GRPING = 'Term Loan' THEN CNT_FTD ELSE 0 END) AS TermLoanCnt,
-//       SUM(CASE WHEN PRODUCT_GRPING = 'Term Loan' THEN OS_FTD ELSE 0 END) AS TermLoanOs,SUM(CASE WHEN PRODUCT_GRPING = 'Loan Against Deposit' THEN CNT_FTD ELSE 0 END) AS LoanAgainstDepoCnt,
-//       SUM(CASE WHEN PRODUCT_GRPING = 'Loan Against Deposit' THEN OS_FTD ELSE 0 END) AS LoanAgainstDepoOs,SUM(CASE WHEN PRODUCT_GRPING = 'Loan Against Property' THEN CNT_FTD ELSE 0 END) AS LoanAgainstPropertyCnt,
-//       SUM(CASE WHEN PRODUCT_GRPING = 'Loan Against Property' THEN OS_FTD ELSE 0 END) AS LoanAgainstPropertyOs,SUM(CASE WHEN PRODUCT_GRPING = 'Auto loan' THEN CNT_FTD ELSE 0 END) AS AutoLoanCnt,
-//       SUM(CASE WHEN PRODUCT_GRPING = 'Auto loan' THEN OS_FTD ELSE 0 END) AS AutoLoanOs,SUM(CASE WHEN PRODUCT_GRPING = 'Personal Loan' THEN CNT_FTD ELSE 0 END) AS PersonalLoanCnt,
-//       SUM(CASE WHEN PRODUCT_GRPING = 'Personal Loan' THEN OS_FTD ELSE 0 END) AS PersonalLoanOs,SUM(CASE WHEN PRODUCT_GRPING = 'CC OD Loan' THEN CNT_FTD ELSE 0 END) AS CcOdLoanCnt,
-//       SUM(CASE WHEN PRODUCT_GRPING = 'CC OD Loan' THEN OS_FTD ELSE 0 END) AS CcOdLoanOs,SUM(CASE WHEN PRODUCT_GRPING = 'Agri Loan' THEN CNT_FTD ELSE 0 END) AS AgriLoanCnt,
-//       SUM(CASE WHEN PRODUCT_GRPING = 'Agri Loan' THEN OS_FTD ELSE 0 END) AS AgriLoanOs,SUM(CASE WHEN PRODUCT_GRPING = 'KCC Loan' THEN CNT_FTD ELSE 0 END) AS KccLoanCnt,
-//       SUM(CASE WHEN PRODUCT_GRPING = 'KCC Loan' THEN OS_FTD ELSE 0 END) AS KccLoanOs
-//       FROM advance_data
-//       WHERE BRANCH_NAME LIKE ?`;
-//     queryParams = [`%${userInput}%`];
-//   }
-
-//   // Execute SQL query with user input as parameter
-//   db.query(query, queryParams, (err, results) => {
-//     if (err) {
-//       console.error('Error fetching filtered advance data:', err);
-//       res.status(500).json({ error: 'Internal Server Error' });
-//       return;
-//     }
-//     res.status(200).json(results[0]);
-//   });
-// });
 
 // Define POST API endpoint to fetch filtered data based on branch name
     // Retrieve input data from request body
-    app.post('/filteredAdvanceDataByBranchName', (req, res) => {
-      const { branchName } = req.body;
-    
-      if (!branchName) {
-        return res.status(400).json({ error: 'Branch name is required' });
-      }
-
-      // const { branchID } = req.body;
-    
-      // if (!branchID) {
-      //   return res.status(400).json({ error: 'Branch ID is required' });
-      // }      
+  //   app.post('/filteredAdvanceDataByBranchName', (req, res) => {
+  //     const  branchName  = req.body.branchName;
       
-      const query = `
-        SELECT * 
-        FROM customer.advance_data 
-        WHERE BRANCH_NAME = ? `;
-      const queryParams = [branchName];
-
-        // const query1 = `
-        // SELECT * 
-        // FROM customer.advance_data 
-        // WHERE BRANCH_ID = ? `;
-        // const queryParams1 = [branchID];
     
-      db.query(query,queryParams, (err, results) => {
+  //     if (!branchName) {
+  //       return res.status(400).json({ error: 'Branch name is required' });
+  //     }
+  //     const query = `
+  //       SELECT BRANCH_NAME,BRANCH_ID,PRODUCT_GRPING,PROD_TYP_DESC,OS_FTD,CNT_FTD
+  //       FROM customer.advance_data 
+  //       WHERE BRANCH_NAME = '${branchName}'`;
+  //     const queryParams = [branchName];
+  //     db.query(query,queryParams, (err, results) => {
+  //       if (err) {
+  //         console.error('Error fetching filtered data:', err);
+  //         res.status(500).json({ error: 'Internal Server Error' });
+  //         return;
+  //       }
+
+  //       res.send(results);
+  //     });
+  //   });
+
+  //   app.post('/filteredAdvanceDataByBranchId', (req, res) => {
+  //     const  branchId  = req.body.branchId;
+  
+  //   if (!branchId) {
+  //     return res.status(400).json({ error: 'Branch Id is required' });
+  //   }      
+    
+  //   const query1 = `
+  //     SELECT BRANCH_ID,BRANCH_NAME,PRODUCT_GRPING,PROD_TYP_DESC,OS_FTD,CNT_FTD
+  //     FROM customer.advance_data 
+  //     WHERE BRANCH_ID = '${branchId}'`;
+  //   const queryParams1 = [branchId];
+
+  //   db.query(query1,queryParams1, (err, results) => {
+  //     if (err) {
+  //       console.error('Error fetching filtered data:', err);
+  //       res.status(500).json({ error: 'Internal Server Error' });
+  //       return;
+  //     }
+
+  //     res.send(results);
+  //   });
+  // });
+
+
+  // app.post('/filteredAdvanceDataByProduct', (req, res) => {
+  //   const  product  = req.body.product;
+    
+  
+  //   if (!product) {
+  //     return res.status(400).json({ error: 'Product  is required' });
+  //   }
+  //   const query2 = `
+  //     SELECT BRANCH_NAME,BRANCH_ID,PRODUCT_GRPING,PROD_TYP_DESC,OS_FTD,CNT_FTD
+  //     FROM customer.advance_data 
+  //     WHERE PRODUCT_GRPING = '${product}'`;
+  //   const queryParams2 = [product];
+  //   db.query(query2,queryParams2, (err, results) => {
+  //     if (err) {
+  //       console.error('Error fetching filtered data:', err);
+  //       res.status(500).json({ error: 'Internal Server Error' });
+  //       return;
+  //     }
+  
+  //     res.send(results);
+  //   });
+  // });
+  
+
+  app.post('/filteredAdvanceData', (req, res) => {
+    const branchId = req.body.branchId;
+    const branchName = req.body.branchName;
+    const product = req.body.product;
+    const productId = req.body.productID;
+
+    let query = `
+        SELECT BRANCH_NAME, BRANCH_ID, PRODUCT_GRPING, PROD_TYP_DESC,PROD_TYP,OS_FTD, CNT_FTD
+        FROM customer.advance_data 
+        WHERE 1`;
+
+    const queryParams = [];
+
+    if (branchId) {
+        query += ` AND BRANCH_ID = ?`;
+        queryParams.push(branchId);
+    }
+
+    if (branchName) {
+        query += ` AND BRANCH_NAME = ?`;
+        queryParams.push(branchName);
+    }
+
+    if (product) {
+        query += ` AND PRODUCT_GRPING = ?`;           
+        queryParams.push(product);
+    }
+    if (productId) {
+      query += ` AND PRODUCT_GRPING = ?`;           
+      queryParams.push(product);
+  }
+
+    db.query(query, queryParams, (err, results) => {
         if (err) {
+            console.error('Error fetching filtered data:', err);
+            res.status(500).json({ error: 'Internal Server Error' });
+            return;
+        }
+
+        res.send(results);
+    });
+});
+
+
+app.post('/filteredDepositData', (req, res) => {
+  const branchId = req.body.branchId;
+  const branchName = req.body.branchName;
+  const product = req.body.product;
+
+  let query = `
+      SELECT BRANCH_NAME, BRANCH_ID, PRODUCT_GRPING, PROD_TYP_DESC, OS_FTD, CNT_FTD
+      FROM customer.deposit_data 
+      WHERE 1`;
+
+  const queryParams = [];
+
+  if (branchId) {
+      query += ` AND BRANCH_ID = ?`;
+      queryParams.push(branchId);
+  }
+
+  if (branchName) {
+      query += ` AND BRANCH_NAME = ?`;
+      queryParams.push(branchName);
+  }
+
+  if (product) {
+      query += ` AND PRODUCT_GRPING = ?`;           
+      queryParams.push(product);
+  }
+
+  db.query(query, queryParams, (err, results) => {
+      if (err) {
           console.error('Error fetching filtered data:', err);
           res.status(500).json({ error: 'Internal Server Error' });
           return;
-        }
-        res.status(200).json(results);
-      });
-    });
-    app.get('/branches', (req, res) => {
-      const query = `SELECT DISTINCT BRANCH_NAME, BRANCH_ID FROM customer.advance_data`;
-    
-      db.query(query, (err, results) => {
-        if (err) {
-          console.error('Error fetching branches:', err);
-          res.status(500).json({ error: 'Internal Server Error' });
-          return;
-        }
-        res.status(200).json(results);
-      });
-    });
+      }
+
+      res.send(results);
+  });
+});
+
+
+app.get('/branchNameSuggestions', (req, res) => {
+  const query = `SELECT DISTINCT BRANCH_NAME FROM customer.advance_data`;
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error fetching branches:', err);
+      res.status(500).json({ error: 'Internal Server Error' });
+      return;
+    }
+    // Extract branch names from results array
+    const branchNames = results.map(result => result.BRANCH_NAME);
+    res.status(200).json(branchNames);
+  });
+});
+
 
 
 // API endpoint to get data into the advance_data's table MAIN PRODUCTS
