@@ -387,80 +387,6 @@ app.get('/depositSubProductNames', (req, res) => {
 
 
 
-// Define POST API endpoint to fetch filtered data based on branch name
-    // Retrieve input data from request body
-  //   app.post('/filteredAdvanceDataByBranchName', (req, res) => {
-  //     const  branchName  = req.body.branchName;
-      
-    
-  //     if (!branchName) {
-  //       return res.status(400).json({ error: 'Branch name is required' });
-  //     }
-  //     const query = `
-  //       SELECT BRANCH_NAME,BRANCH_ID,PRODUCT_GRPING,PROD_TYP_DESC,OS_FTD,CNT_FTD
-  //       FROM customer.advance_data 
-  //       WHERE BRANCH_NAME = '${branchName}'`;
-  //     const queryParams = [branchName];
-  //     db.query(query,queryParams, (err, results) => {
-  //       if (err) {
-  //         console.error('Error fetching filtered data:', err);
-  //         res.status(500).json({ error: 'Internal Server Error' });
-  //         return;
-  //       }
-
-  //       res.send(results);
-  //     });
-  //   });
-
-  //   app.post('/filteredAdvanceDataByBranchId', (req, res) => {
-  //     const  branchId  = req.body.branchId;
-  
-  //   if (!branchId) {
-  //     return res.status(400).json({ error: 'Branch Id is required' });
-  //   }      
-    
-  //   const query1 = `
-  //     SELECT BRANCH_ID,BRANCH_NAME,PRODUCT_GRPING,PROD_TYP_DESC,OS_FTD,CNT_FTD
-  //     FROM customer.advance_data 
-  //     WHERE BRANCH_ID = '${branchId}'`;
-  //   const queryParams1 = [branchId];
-
-  //   db.query(query1,queryParams1, (err, results) => {
-  //     if (err) {
-  //       console.error('Error fetching filtered data:', err);
-  //       res.status(500).json({ error: 'Internal Server Error' });
-  //       return;
-  //     }
-
-  //     res.send(results);
-  //   });
-  // });
-
-
-  // app.post('/filteredAdvanceDataByProduct', (req, res) => {
-  //   const  product  = req.body.product;
-    
-  
-  //   if (!product) {
-  //     return res.status(400).json({ error: 'Product  is required' });
-  //   }
-  //   const query2 = `
-  //     SELECT BRANCH_NAME,BRANCH_ID,PRODUCT_GRPING,PROD_TYP_DESC,OS_FTD,CNT_FTD
-  //     FROM customer.advance_data 
-  //     WHERE PRODUCT_GRPING = '${product}'`;
-  //   const queryParams2 = [product];
-  //   db.query(query2,queryParams2, (err, results) => {
-  //     if (err) {
-  //       console.error('Error fetching filtered data:', err);
-  //       res.status(500).json({ error: 'Internal Server Error' });
-  //       return;
-  //     }
-  
-  //     res.send(results);
-  //   });
-  // });
-  
-
   app.post('/filteredAdvanceData', (req, res) => {
     const branchId = req.body.branchId;
     const branchName = req.body.branchName;
@@ -483,7 +409,7 @@ app.get('/depositSubProductNames', (req, res) => {
         query += ` AND BRANCH_NAME = ?`;
         queryParams.push(branchName);
     }
-
+  
     if (product) {
         query += ` AND PRODUCT_GRPING = ?`;           
         queryParams.push(product);
@@ -504,18 +430,18 @@ app.get('/depositSubProductNames', (req, res) => {
     });
 });
 
-
+ 
 app.post('/filteredDepositData', (req, res) => {
   const branchId = req.body.branchId;
   const branchName = req.body.branchName;
   const product = req.body.product;
-
+  
   let query = `
       SELECT BRANCH_NAME, BRANCH_ID, PRODUCT_GRPING, PROD_TYP_DESC, OS_FTD, CNT_FTD
       FROM customer.deposit_data 
       WHERE 1`;
 
-  const queryParams = [];
+  const queryParams = []; 
 
   if (branchId) {
       query += ` AND BRANCH_ID = ?`;
@@ -544,7 +470,7 @@ app.post('/filteredDepositData', (req, res) => {
 });
 
 
-app.get('/branchNameSuggestions', (req, res) => {
+app.get('/branchName', (req, res) => {
   const query = `SELECT DISTINCT BRANCH_NAME FROM customer.advance_data`;
 
   db.query(query, (err, results) => {
@@ -557,8 +483,39 @@ app.get('/branchNameSuggestions', (req, res) => {
     const branchNames = results.map(result => result.BRANCH_NAME);
     res.status(200).json(branchNames);
   });
-});
+});  
 
+
+app.get('/branchId', (req, res) => {
+  const query = `SELECT DISTINCT BRANCH_ID FROM customer.advance_data`;
+  
+  db.query(query, (err, results) => {
+      if (err) {
+        console.error('Error fetching branches:', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+        return;
+      }
+      // Extract branch names from results array
+      const branchId   = results.map(result => result.BRANCH_ID);
+      res.status(200).json(branchId);
+    });
+  });  
+  
+
+app.get('/productName', (req, res) => {
+const query = `SELECT DISTINCT PRODUCT_GRPING FROM customer.advance_data`;
+
+db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error fetching branches:', err);
+      res.status(500).json({ error: 'Internal Server Error' });
+      return;
+    }
+    // Extract branch names from results array
+    const productName   = results.map(result => result.PRODUCT_GRPING);
+    res.status(200).json(productName);
+  });
+});  
 
 
 // API endpoint to get data into the advance_data's table MAIN PRODUCTS
